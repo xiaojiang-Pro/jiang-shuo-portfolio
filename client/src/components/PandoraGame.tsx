@@ -226,8 +226,118 @@ function hasGroundBelow(
     footY >= p.y && footY <= p.y + p.h
   );
 }
+// ─── Web Audio Sound Engine ─────────────────────────────────────────────────────────
+let _audioCtx: AudioContext | null = null;
+function getAudioCtx(): AudioContext {
+  if (!_audioCtx) _audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+  return _audioCtx;
+}
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+function playTone(
+  type: OscillatorType,
+  freq: number,
+  duration: number,
+  volume = 0.18,
+  freqEnd?: number,
+  delay = 0
+) {
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+    if (freqEnd !== undefined) {
+      osc.frequency.linearRampToValueAtTime(freqEnd, ctx.currentTime + delay + duration);
+    }
+    gain.gain.setValueAtTime(volume, ctx.currentTime + delay);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + duration);
+    osc.start(ctx.currentTime + delay);
+    osc.stop(ctx.currentTime + delay + duration);
+  } catch (_) { /* ignore audio errors */ }
+}
+
+const SFX = {
+  jump: () => {
+    playTone("sine", 280, 0.12, 0.14, 520);
+  },
+  shoot: () => {
+    playTone("sawtooth", 600, 0.06, 0.10, 200);
+    playTone("sine", 900, 0.04, 0.06, 400, 0.02);
+  },
+  hit: () => {
+    // Player takes damage - low thud
+    playTone("square", 120, 0.15, 0.18, 60);
+    playTone("sawtooth", 80, 0.12, 0.1, 40, 0.05);
+  },
+  enemyDie: () => {
+    playTone("sawtooth", 300, 0.08, 0.12, 80);
+    playTone("sine", 200, 0.1, 0.08, 50, 0.04);
+  },
+  collectFruit: () => {
+    playTone("sine", 660, 0.08, 0.14, 880);
+    playTone("sine", 880, 0.06, 0.08, 1100, 0.06);
+  },
+  collectArrow: () => {
+    playTone("triangle", 440, 0.06, 0.12, 660);
+    playTone("triangle", 660, 0.06, 0.06, 880, 0.06);
+    playTone("triangle", 880, 0.06, 0.06, 1100, 0.12);
+  },
+  collectShield: () => {
+    playTone("sine", 520, 0.08, 0.12, 780);
+    playTone("sine", 780, 0.06, 0.1, 1040, 0.08);
+  },
+  levelClear: () => {
+    // Ascending fanfare
+    [0, 0.1, 0.2, 0.35].forEach((d, i) => {
+      const freqs = [523, 659, 784, 1047];
+      playTone("sine", freqs[i], 0.25, 0.18, freqs[i] * 1.02, d);
+    });
+  },
+  gameOver: () => {
+    playTone("sawtooth", 220, 0.3, 0.2, 110);
+    playTone("sawtooth", 180, 0.25, 0.3, 80, 0.2);
+    playTone("sawtooth", 140, 0.2, 0.4, 60, 0.4);
+  },
+  victory: () => {
+    // Victory fanfare
+    const melody = [523, 659, 784, 659, 784, 1047];
+    const delays = [0, 0.12, 0.24, 0.4, 0.52, 0.64];
+    melody.forEach((f, i) => playTone("sine", f, 0.22, 0.2, f * 1.01, delays[i]));
+  },
+  bossDie: () => {
+    // Epic boss death
+    [0, 0.1, 0.2, 0.3, 0.4].forEach((d, i) => {
+      playTone("sawtooth", 400 - i * 60, 0.2, 0.22, 100, d);
+    });
+    playTone("sine", 1047, 0.3, 0.5, 200, 0.3);
+  },
+  newHighScore: () => {
+    // Special new record jingle
+    [0, 0.15, 0.3, 0.45, 0.6].forEach((d, i) => {
+      const freqs = [523, 659, 784, 1047, 1319];
+      playTone("sine", freqs[i], 0.3, 0.22, freqs[i] * 1.02, d);
+    });
+  },
+};
+
+// ─── Local High Score ─────────────────────────────────────────────────────────
+const HS_KEY = "pandora_high_score";
+function loadHighScore(): number {
+  try { return parseInt(localStorage.getItem(HS_KEY) || "0", 10) || 0; } catch { return 0; }
+}
+function saveHighScore(score: number): boolean {
+  const prev = loadHighScore();
+  if (score > prev) {
+    try { localStorage.setItem(HS_KEY, String(score)); } catch { /* ignore */ }
+    return true; // new record
+  }
+  return false;
+}
+
+// ─── Main Component ────────────────────────────────────────────────────────────────
 let _nextId = 0;
 const nextId = () => ++_nextId;
 
@@ -254,6 +364,15 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
   });
 
   const [ui, setUi] = useState({ running: false, gameOver: false, gameWon: false, levelComplete: false, level: 1, score: 0, hp: 5, maxHp: 5, shield: false, arrowLevel: 1 });
+  const [highScore, setHighScore] = useState(() => loadHighScore());
+  const [isNewRecord, setIsNewRecord] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const mutedRef = useRef(false);
+
+  // Keep mutedRef in sync with muted state for use inside gameLoop
+  const sfx = useCallback((fn: () => void) => {
+    if (!mutedRef.current) fn();
+  }, []);
 
   const spawnParticles = useCallback((x: number, y: number, color: string, count = 8, speed = 4) => {
     const g = gameRef.current;
@@ -291,7 +410,10 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
     g.gameOver = false;
     g.gameWon = false;
     g.running = true;
+    // Initialize AudioContext on user gesture (required by browsers)
+    try { getAudioCtx(); } catch (_) { /* ignore */ }
     initLevel(1);
+    setIsNewRecord(false);
     setUi({ running: true, gameOver: false, gameWon: false, levelComplete: false, level: 1, score: 0, hp: 5, maxHp: 5, shield: false, arrowLevel: 1 });
   }, [initLevel]);
 
@@ -332,6 +454,7 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
       if ((k["ArrowUp"] || k[" "] || k["w"] || k["W"]) && p.onGround) {
         p.vy = JUMP_FORCE;
         p.onGround = false;
+        sfx(SFX.jump);
       }
 
       // Shoot
@@ -344,6 +467,7 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
           g.bullets.push({ id: nextId(), x: p.x + (p.dir > 0 ? p.w : 0), y: p.y + p.h / 2, vx: bvx, vy: 2, fromPlayer: true });
         }
         p.shootCooldown = p.arrowLevel >= 2 ? 14 : 20;
+        sfx(SFX.shoot);
       }
 
       // Physics - use robust two-pass AABB
@@ -393,6 +517,10 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
       if (p.deathTimer <= 0) {
         g.running = false;
         g.gameOver = true;
+        sfx(SFX.gameOver);
+        // Save high score on game over too
+        const isRec = saveHighScore(g.score);
+        if (isRec) { setHighScore(g.score); setIsNewRecord(true); }
         setUi(prev => ({ ...prev, running: false, gameOver: true }));
       }
     }
@@ -455,10 +583,12 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
           // Grant brief invincibility frames (60 ticks) after melee hit
           p.shieldTimer = 60;
           spawnParticles(p.x + p.w / 2, p.y, "#FF4444", 6, 3);
+          sfx(SFX.hit);
         } else {
           // Shield item absorbs the hit
           p.shield = false; p.shieldTimer = 0;
           spawnParticles(p.x + p.w / 2, p.y, "#00FFCC", 8, 4);
+          sfx(SFX.hit);
         }
         // Knockback away from enemy
         const kbDir = p.x > e.x ? 1 : -1;
@@ -489,6 +619,7 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
             e.deathTimer = 40;
             g.score += e.type === "boss" ? 500 : e.type === "mech" ? 100 : 30;
             spawnParticles(e.x + e.w / 2, e.y + e.h / 2, e.type === "boss" ? "#FFD700" : "#FF6600", 14, 5);
+            sfx(e.type === "boss" ? SFX.bossDie : SFX.enemyDie);
           }
           hit = true;
           break;
@@ -505,9 +636,11 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
           if (!p.shield) {
             p.hp--;
             spawnParticles(p.x + p.w / 2, p.y + p.h / 2, "#FF4444", 6, 3);
+            sfx(SFX.hit);
           } else {
             p.shield = false; p.shieldTimer = 0;
             spawnParticles(p.x + p.w / 2, p.y, "#00FFCC", 8, 4);
+            sfx(SFX.hit);
           }
           return false;
         }
@@ -519,9 +652,9 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
     for (const item of g.items) {
       if (!item.collected && rectOverlap(p.x, p.y, p.w, p.h, item.x - 12, item.y - 12, 24, 24)) {
         item.collected = true;
-        if (item.type === "fruit") { p.hp = Math.min(p.hp + 1, p.maxHp); spawnParticles(item.x, item.y, "#00FF88", 8, 3); g.score += 20; }
-        else if (item.type === "arrow") { p.arrowLevel = 2; spawnParticles(item.x, item.y, "#00D4FF", 8, 3); g.score += 50; }
-        else if (item.type === "shield") { p.shield = true; p.shieldTimer = 300; spawnParticles(item.x, item.y, "#B07BFF", 8, 3); g.score += 30; }
+        if (item.type === "fruit") { p.hp = Math.min(p.hp + 1, p.maxHp); spawnParticles(item.x, item.y, "#00FF88", 8, 3); g.score += 20; sfx(SFX.collectFruit); }
+        else if (item.type === "arrow") { p.arrowLevel = 2; spawnParticles(item.x, item.y, "#00D4FF", 8, 3); g.score += 50; sfx(SFX.collectArrow); }
+        else if (item.type === "shield") { p.shield = true; p.shieldTimer = 300; spawnParticles(item.x, item.y, "#B07BFF", 8, 3); g.score += 30; sfx(SFX.collectShield); }
       }
     }
 
@@ -530,6 +663,7 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
       g.levelComplete = true;
       g.score += 200;
       if (g.level < 3) {
+        sfx(SFX.levelClear);
         setTimeout(() => {
           initLevel(g.level + 1);
           setUi(prev => ({ ...prev, level: g.level, levelComplete: false }));
@@ -538,6 +672,15 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
       } else {
         g.running = false;
         g.gameWon = true;
+        // Save high score and check for new record
+        const isRecord = saveHighScore(g.score);
+        if (isRecord) {
+          sfx(SFX.newHighScore);
+          setHighScore(g.score);
+          setIsNewRecord(true);
+        } else {
+          sfx(SFX.victory);
+        }
         setUi(prev => ({ ...prev, running: false, gameWon: true, score: g.score }));
       }
     }
@@ -655,8 +798,12 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
             <span className="text-lg">🏹</span>
             <span className="font-bold text-sm" style={{ color: "#00D4FF", fontFamily: "'Noto Serif SC', serif" }}>潘多拉保卫战</span>
             <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(176,123,255,0.15)", color: "#B07BFF", border: "1px solid rgba(176,123,255,0.3)" }}>Lv.{ui.level}/3</span>
+            {/* High Score */}
+            <div className="text-xs" style={{ color: "rgba(255,215,0,0.8)" }}>
+              🏆 {highScore > 0 ? highScore : "--"}
+            </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {/* HP */}
             <div className="flex items-center gap-1">
               {Array.from({ length: ui.maxHp }).map((_, i) => (
@@ -672,6 +819,19 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
               <p className="text-xs" style={{ color: "rgba(160,200,240,0.5)" }}>得分</p>
               <p className="font-bold text-sm" style={{ color: "#00FFCC" }}>{ui.score}</p>
             </div>
+            {/* Mute button */}
+            <button
+              onClick={() => {
+                const next = !muted;
+                setMuted(next);
+                mutedRef.current = next;
+              }}
+              className="px-2 py-1.5 rounded-lg text-sm transition-all hover:scale-110"
+              style={{ background: "rgba(0,212,255,0.08)", border: "1px solid rgba(0,212,255,0.2)", color: muted ? "rgba(160,200,240,0.4)" : "#00D4FF" }}
+              title={muted ? "开启音效" : "静音"}
+            >
+              {muted ? "🔇" : "🔊"}
+            </button>
             <button onClick={onClose} className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all hover:scale-105" style={{ background: "rgba(255,60,60,0.15)", border: "1px solid rgba(255,60,60,0.35)", color: "#FF6B6B" }}>退出</button>
           </div>
         </div>
@@ -700,6 +860,11 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
                 <span>🏹 弓箭升级 = 三连射</span>
                 <span>🛡️ 护盾 = 免伤</span>
               </div>
+              {highScore > 0 && (
+                <div className="text-xs px-3 py-1.5 rounded-full" style={{ background: "rgba(255,215,0,0.1)", border: "1px solid rgba(255,215,0,0.3)", color: "rgba(255,215,0,0.9)" }}>
+                  🏆 历史最高分：{highScore}
+                </div>
+              )}
               <button onClick={startGame} className="px-8 py-3 rounded-full font-bold text-sm transition-all hover:scale-105" style={{ background: "linear-gradient(135deg, #00D4FF, #0066CC)", color: "#050A1A", boxShadow: "0 0 24px rgba(0,212,255,0.4)" }}>
                 🌿 开始游戏
               </button>
@@ -712,6 +877,12 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
               <div className="text-5xl">💔</div>
               <h2 className="text-2xl font-bold" style={{ color: "#FF6B6B", fontFamily: "'Noto Serif SC', serif", textShadow: "0 0 20px rgba(255,60,60,0.5)" }}>纳威人倒下了...</h2>
               <p className="text-sm" style={{ color: "rgba(160,200,240,0.7)" }}>最终得分：<span style={{ color: "#00FFCC", fontWeight: "bold" }}>{ui.score}</span></p>
+              {isNewRecord && (
+                <div className="text-sm px-4 py-2 rounded-full animate-pulse" style={{ background: "rgba(255,215,0,0.15)", border: "1px solid rgba(255,215,0,0.5)", color: "#FFD700" }}>
+                  ✨ 新纪录！超越了历史最高分！
+                </div>
+              )}
+              <p className="text-xs" style={{ color: "rgba(255,215,0,0.7)" }}>🏆 历史最高：{highScore}</p>
               <div className="flex gap-3">
                 <button onClick={startGame} className="px-6 py-2.5 rounded-full font-semibold text-sm transition-all hover:scale-105" style={{ background: "linear-gradient(135deg, #00D4FF, #0066CC)", color: "#050A1A", boxShadow: "0 0 20px rgba(0,212,255,0.35)" }}>🔄 再战一次</button>
                 <button onClick={onClose} className="px-6 py-2.5 rounded-full font-semibold text-sm transition-all hover:scale-105" style={{ background: "rgba(255,60,60,0.15)", border: "1px solid rgba(255,60,60,0.35)", color: "#FF6B6B" }}>退出</button>
@@ -725,6 +896,13 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
               <div className="text-5xl animate-bounce">🏆</div>
               <h2 className="text-2xl font-bold" style={{ color: "#00FFCC", fontFamily: "'Noto Serif SC', serif", textShadow: "0 0 20px rgba(0,255,200,0.5)" }}>潘多拉得救了！</h2>
               <p className="text-sm" style={{ color: "rgba(160,200,240,0.8)" }}>Eywa ngahu！最终得分：<span style={{ color: "#FFD700", fontWeight: "bold" }}>{ui.score}</span></p>
+              {isNewRecord ? (
+                <div className="text-sm px-4 py-2 rounded-full animate-bounce" style={{ background: "rgba(255,215,0,0.2)", border: "2px solid rgba(255,215,0,0.6)", color: "#FFD700" }}>
+                  🌟 新纪录！历史最高分被打破！
+                </div>
+              ) : (
+                <p className="text-xs" style={{ color: "rgba(255,215,0,0.7)" }}>🏆 历史最高：{highScore}</p>
+              )}
               <div className="flex gap-3">
                 <button onClick={startGame} className="px-6 py-2.5 rounded-full font-semibold text-sm transition-all hover:scale-105" style={{ background: "linear-gradient(135deg, #00FFCC, #00A080)", color: "#050A1A", boxShadow: "0 0 20px rgba(0,255,200,0.35)" }}>🔄 再玩一次</button>
                 <button onClick={onClose} className="px-6 py-2.5 rounded-full font-semibold text-sm transition-all hover:scale-105" style={{ background: "rgba(0,212,255,0.1)", border: "1px solid rgba(0,212,255,0.3)", color: "#00D4FF" }}>返回</button>
