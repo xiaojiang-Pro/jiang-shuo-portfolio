@@ -780,17 +780,23 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
     const up = (e: KeyboardEvent) => { keys.current[e.key] = false; };
     window.addEventListener("keydown", down);
     window.addEventListener("keyup", up);
+    // Prevent page scroll while game is open (mobile)
+    const preventScroll = (e: TouchEvent) => e.preventDefault();
+    document.body.addEventListener("touchmove", preventScroll, { passive: false });
+    document.body.style.overflow = "hidden";
     animRef.current = requestAnimationFrame(gameLoop);
     return () => {
       window.removeEventListener("keydown", down);
       window.removeEventListener("keyup", up);
+      document.body.removeEventListener("touchmove", preventScroll);
+      document.body.style.overflow = "";
       cancelAnimationFrame(animRef.current);
     };
   }, [gameLoop]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "rgba(0,5,15,0.93)", backdropFilter: "blur(8px)" }}>
-      <div className="relative rounded-2xl overflow-hidden" style={{ border: "2px solid rgba(0,212,255,0.4)", boxShadow: "0 0 60px rgba(0,212,255,0.2)", maxWidth: "min(820px, 98vw)", width: "100%" }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "rgba(0,5,15,0.93)", backdropFilter: "blur(8px)", touchAction: "none" }}>
+      <div className="relative overflow-hidden" style={{ border: "2px solid rgba(0,212,255,0.4)", boxShadow: "0 0 60px rgba(0,212,255,0.2)", maxWidth: "min(820px, 98vw)", width: "100%", borderRadius: "clamp(0px, 2vw, 16px)" }}>
 
         {/* Header HUD */}
         <div className="flex items-center justify-between px-4 py-2.5" style={{ background: "rgba(5,10,26,0.97)", borderBottom: "1px solid rgba(0,212,255,0.2)" }}>
@@ -839,6 +845,90 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
         {/* Canvas */}
         <div className="relative">
           <canvas ref={canvasRef} width={W} height={H} className="block w-full" />
+
+          {/* Mobile Touch Controls - only shown when game is running */}
+          {ui.running && (
+            <div
+              className="absolute bottom-0 left-0 right-0 flex items-end justify-between px-3 pb-3 pointer-events-none"
+              style={{ height: "120px" }}
+            >
+              {/* Left side: D-pad (move left / move right) */}
+              <div className="flex gap-2 pointer-events-auto">
+                <button
+                  onTouchStart={(e) => { e.preventDefault(); keys.current["ArrowLeft"] = true; }}
+                  onTouchEnd={(e) => { e.preventDefault(); keys.current["ArrowLeft"] = false; }}
+                  onMouseDown={() => keys.current["ArrowLeft"] = true}
+                  onMouseUp={() => keys.current["ArrowLeft"] = false}
+                  onMouseLeave={() => keys.current["ArrowLeft"] = false}
+                  className="select-none"
+                  style={{
+                    width: 56, height: 56, borderRadius: "50%",
+                    background: "rgba(0,212,255,0.18)",
+                    border: "2px solid rgba(0,212,255,0.5)",
+                    color: "#00D4FF", fontSize: 22, display: "flex",
+                    alignItems: "center", justifyContent: "center",
+                    backdropFilter: "blur(4px)", userSelect: "none",
+                    WebkitUserSelect: "none", touchAction: "none",
+                  }}
+                >◀</button>
+                <button
+                  onTouchStart={(e) => { e.preventDefault(); keys.current["ArrowRight"] = true; }}
+                  onTouchEnd={(e) => { e.preventDefault(); keys.current["ArrowRight"] = false; }}
+                  onMouseDown={() => keys.current["ArrowRight"] = true}
+                  onMouseUp={() => keys.current["ArrowRight"] = false}
+                  onMouseLeave={() => keys.current["ArrowRight"] = false}
+                  className="select-none"
+                  style={{
+                    width: 56, height: 56, borderRadius: "50%",
+                    background: "rgba(0,212,255,0.18)",
+                    border: "2px solid rgba(0,212,255,0.5)",
+                    color: "#00D4FF", fontSize: 22, display: "flex",
+                    alignItems: "center", justifyContent: "center",
+                    backdropFilter: "blur(4px)", userSelect: "none",
+                    WebkitUserSelect: "none", touchAction: "none",
+                  }}
+                >▶</button>
+              </div>
+
+              {/* Right side: Jump + Shoot */}
+              <div className="flex gap-2 pointer-events-auto">
+                <button
+                  onTouchStart={(e) => { e.preventDefault(); keys.current["f"] = true; }}
+                  onTouchEnd={(e) => { e.preventDefault(); keys.current["f"] = false; }}
+                  onMouseDown={() => keys.current["f"] = true}
+                  onMouseUp={() => keys.current["f"] = false}
+                  onMouseLeave={() => keys.current["f"] = false}
+                  className="select-none"
+                  style={{
+                    width: 56, height: 56, borderRadius: "50%",
+                    background: "rgba(176,123,255,0.22)",
+                    border: "2px solid rgba(176,123,255,0.6)",
+                    color: "#B07BFF", fontSize: 20, display: "flex",
+                    alignItems: "center", justifyContent: "center",
+                    backdropFilter: "blur(4px)", userSelect: "none",
+                    WebkitUserSelect: "none", touchAction: "none",
+                  }}
+                >🏹</button>
+                <button
+                  onTouchStart={(e) => { e.preventDefault(); keys.current[" "] = true; }}
+                  onTouchEnd={(e) => { e.preventDefault(); keys.current[" "] = false; }}
+                  onMouseDown={() => keys.current[" "] = true}
+                  onMouseUp={() => keys.current[" "] = false}
+                  onMouseLeave={() => keys.current[" "] = false}
+                  className="select-none"
+                  style={{
+                    width: 64, height: 64, borderRadius: "50%",
+                    background: "rgba(0,255,204,0.22)",
+                    border: "2px solid rgba(0,255,204,0.6)",
+                    color: "#00FFCC", fontSize: 22, display: "flex",
+                    alignItems: "center", justifyContent: "center",
+                    backdropFilter: "blur(4px)", userSelect: "none",
+                    WebkitUserSelect: "none", touchAction: "none",
+                  }}
+                >跳</button>
+              </div>
+            </div>
+          )}
 
           {/* Start Screen */}
           {!ui.running && !ui.gameOver && !ui.gameWon && (
@@ -911,11 +1001,12 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
           )}
         </div>
 
-        {/* Controls reminder */}
-        <div className="flex items-center justify-center gap-6 px-4 py-2 text-xs" style={{ background: "rgba(5,10,26,0.97)", borderTop: "1px solid rgba(0,212,255,0.15)", color: "rgba(160,200,240,0.5)" }}>
-          <span>⬅️➡️/AD 移动</span>
-          <span>⬆️/空格/W 跳跃</span>
-          <span>F/J 射箭</span>
+        {/* Controls reminder - keyboard on desktop, touch hint on mobile */}
+        <div className="flex items-center justify-center gap-4 px-4 py-2 text-xs" style={{ background: "rgba(5,10,26,0.97)", borderTop: "1px solid rgba(0,212,255,0.15)", color: "rgba(160,200,240,0.5)" }}>
+          <span className="hidden sm:inline">⬅️➡️/AD 移动</span>
+          <span className="hidden sm:inline">⬆️/空格/W 跳跃</span>
+          <span className="hidden sm:inline">F/J 射箭</span>
+          <span className="sm:hidden">◀▶ 移动 &nbsp;|跳 跳跃 &nbsp;|🏹 射箭</span>
           <span>🍎 回血 &nbsp;🏹 三连射 &nbsp;🛡️ 护盾</span>
         </div>
       </div>
