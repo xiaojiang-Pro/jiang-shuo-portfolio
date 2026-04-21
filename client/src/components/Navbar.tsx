@@ -1,10 +1,8 @@
 /**
- * Design: 温暖橘粉渐变风 - 顶部固定导航栏
- * Colors: 背景暖米白 + 粉色主色 + 深棕文字
- * Style: 毛玻璃效果，滚动后背景加深
+ * Design: 潘多拉星球生物发光蓝色主题 - 导航栏
+ * Style: 深色半透明毛玻璃 + 青蓝发光边框
  */
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 
 const navLinks = [
   { label: "首页", href: "#home" },
@@ -21,7 +19,15 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      setScrolled(window.scrollY > 30);
+      const sections = ["home", "about", "experience", "skills", "contact"];
+      for (const id of [...sections].reverse()) {
+        const el = document.getElementById(id);
+        if (el && window.scrollY >= el.offsetTop - 120) {
+          setActiveSection(id);
+          break;
+        }
+      }
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -30,19 +36,25 @@ export default function Navbar() {
   const scrollToSection = (href: string) => {
     const id = href.replace("#", "");
     const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
+    if (el) el.scrollIntoView({ behavior: "smooth" });
     setMobileOpen(false);
   };
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/80 backdrop-blur-md shadow-sm border-b border-rose-100"
-          : "bg-transparent"
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+      style={{
+        background: scrolled
+          ? "rgba(5, 10, 26, 0.88)"
+          : "rgba(5, 10, 26, 0.35)",
+        backdropFilter: "blur(18px)",
+        borderBottom: scrolled
+          ? "1px solid rgba(0, 212, 255, 0.22)"
+          : "1px solid transparent",
+        boxShadow: scrolled
+          ? "0 4px 30px rgba(0, 212, 255, 0.08)"
+          : "none",
+      }}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -51,10 +63,23 @@ export default function Navbar() {
             onClick={() => scrollToSection("#home")}
             className="flex items-center gap-2 group"
           >
-            <span className="text-lg">🌸</span>
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center text-sm animate-pulse-glow"
+              style={{
+                background: "linear-gradient(135deg, #00D4FF, #7B5EA7)",
+                boxShadow: "0 0 14px rgba(0, 212, 255, 0.55)",
+              }}
+            >
+              🌿
+            </div>
             <span
-              className="font-semibold text-[#C85C72] tracking-wide"
-              style={{ fontFamily: "'Noto Serif SC', serif" }}
+              className="font-bold text-base tracking-wide"
+              style={{
+                fontFamily: "'Noto Serif SC', serif",
+                background: "linear-gradient(90deg, #00D4FF, #00FFCC)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
             >
               姜硕的空间
             </span>
@@ -62,58 +87,86 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <button
-                key={link.href}
-                onClick={() => scrollToSection(link.href)}
-                className="px-4 py-2 text-sm text-[#4A3728]/80 hover:text-[#C85C72] transition-colors duration-200 relative group"
-              >
-                {link.label}
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-[#C85C72] group-hover:w-4/5 transition-all duration-300 rounded-full" />
-              </button>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = activeSection === link.href.replace("#", "");
+              return (
+                <button
+                  key={link.href}
+                  onClick={() => scrollToSection(link.href)}
+                  className="relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-200"
+                  style={{
+                    color: isActive ? "#00D4FF" : "rgba(160, 210, 255, 0.7)",
+                    background: isActive ? "rgba(0, 212, 255, 0.12)" : "transparent",
+                    textShadow: isActive ? "0 0 12px rgba(0, 212, 255, 0.6)" : "none",
+                  }}
+                >
+                  {link.label}
+                  {isActive && (
+                    <span
+                      className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
+                      style={{ background: "#00D4FF", boxShadow: "0 0 6px #00D4FF" }}
+                    />
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           {/* CTA Button */}
-          <div className="hidden md:block">
-            <Button
-              onClick={() => scrollToSection("#contact")}
-              className="bg-[#C85C72] hover:bg-[#B04A60] text-white rounded-full px-5 py-2 text-sm font-medium shadow-sm hover:shadow-md transition-all duration-200"
-            >
-              ✉ 联系我
-            </Button>
-          </div>
+          <button
+            onClick={() => scrollToSection("#contact")}
+            className="hidden md:flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 hover:scale-105"
+            style={{
+              background: "linear-gradient(135deg, #00D4FF, #0066CC)",
+              color: "#050A1A",
+              boxShadow: "0 0 20px rgba(0, 212, 255, 0.4)",
+            }}
+          >
+            ✉ 联系我
+          </button>
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-[#4A3728]"
+            className="md:hidden p-2"
+            style={{ color: "#00D4FF" }}
             onClick={() => setMobileOpen(!mobileOpen)}
           >
-            <div className="w-5 h-0.5 bg-current mb-1 transition-all" />
-            <div className="w-5 h-0.5 bg-current mb-1 transition-all" />
-            <div className="w-5 h-0.5 bg-current transition-all" />
+            <div className="w-5 h-0.5 bg-current mb-1" />
+            <div className="w-5 h-0.5 bg-current mb-1" />
+            <div className="w-5 h-0.5 bg-current" />
           </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-white/95 backdrop-blur-md border-t border-rose-100 px-4 py-4">
+        <div
+          className="md:hidden px-4 pb-4 space-y-1"
+          style={{
+            background: "rgba(5, 10, 26, 0.97)",
+            borderTop: "1px solid rgba(0, 212, 255, 0.15)",
+          }}
+        >
           {navLinks.map((link) => (
             <button
               key={link.href}
               onClick={() => scrollToSection(link.href)}
-              className="block w-full text-left px-3 py-3 text-sm text-[#4A3728] hover:text-[#C85C72] hover:bg-rose-50 rounded-lg transition-colors"
+              className="block w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-colors"
+              style={{ color: "rgba(160, 210, 255, 0.8)" }}
             >
               {link.label}
             </button>
           ))}
-          <Button
+          <button
             onClick={() => scrollToSection("#contact")}
-            className="w-full mt-3 bg-[#C85C72] hover:bg-[#B04A60] text-white rounded-full"
+            className="w-full mt-2 py-2.5 rounded-full text-sm font-semibold"
+            style={{
+              background: "linear-gradient(135deg, #00D4FF, #0066CC)",
+              color: "#050A1A",
+            }}
           >
             ✉ 联系我
-          </Button>
+          </button>
         </div>
       )}
     </nav>

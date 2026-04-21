@@ -1,16 +1,13 @@
 /**
- * Design: 温暖橘粉渐变风 - 技能专长区域
- * Layout: 技能卡片 + 工具标签云
- * Colors: 白色背景 + 粉色渐变标签
+ * Design: 潘多拉星球生物发光蓝色主题 - 技能专长区域
+ * Style: 深蓝卡片 + 发光进度条 + 标签云
  */
-
-const SKILLS_DECO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/skills-decoration-PTKqcRugGuPnsaeyWzrDEt.webp";
 
 const skillCategories = [
   {
     icon: "🔬",
     title: "AI评测能力",
-    color: "#C85C72",
+    color: "#00D4FF",
     skills: [
       { name: "多模态大模型评测", level: 95 },
       { name: "I2V视频生成评测", level: 92 },
@@ -21,7 +18,7 @@ const skillCategories = [
   {
     icon: "💻",
     title: "技术能力",
-    color: "#F4956A",
+    color: "#00FFCC",
     skills: [
       { name: "Python自动化脚本", level: 82 },
       { name: "Prompt工程", level: 90 },
@@ -32,7 +29,7 @@ const skillCategories = [
   {
     icon: "🛠️",
     title: "工具平台",
-    color: "#9B7FBD",
+    color: "#B07BFF",
     skills: [
       { name: "Dify平台", level: 85 },
       { name: "RAG知识库构建", level: 80 },
@@ -43,60 +40,85 @@ const skillCategories = [
 ];
 
 const toolTags = [
-  { name: "Python", emoji: "🐍" },
-  { name: "Prompt Engineering", emoji: "✍️" },
-  { name: "Dify", emoji: "⚡" },
-  { name: "RAG", emoji: "📚" },
-  { name: "Trae", emoji: "🛠️" },
-  { name: "多模态评测", emoji: "🔬" },
-  { name: "I2V评测", emoji: "🎬" },
-  { name: "VLM评测", emoji: "👁️" },
-  { name: "数据标注", emoji: "🏷️" },
-  { name: "多线程并发", emoji: "⚡" },
-  { name: "数据自动化", emoji: "🤖" },
-  { name: "评测报告", emoji: "📊" },
+  { name: "Python", emoji: "🐍", color: "#00D4FF" },
+  { name: "Prompt Engineering", emoji: "✍️", color: "#00FFCC" },
+  { name: "Dify", emoji: "⚡", color: "#B07BFF" },
+  { name: "RAG", emoji: "📚", color: "#00D4FF" },
+  { name: "Trae", emoji: "🛠️", color: "#00FFCC" },
+  { name: "多模态评测", emoji: "🔬", color: "#7B9FFF" },
+  { name: "I2V评测", emoji: "🎬", color: "#00D4FF" },
+  { name: "VLM评测", emoji: "👁️", color: "#00FFCC" },
+  { name: "数据标注", emoji: "🏷️", color: "#B07BFF" },
+  { name: "多线程并发", emoji: "⚡", color: "#00D4FF" },
+  { name: "数据自动化", emoji: "🤖", color: "#00FFCC" },
+  { name: "评测报告", emoji: "📊", color: "#7B9FFF" },
 ];
 
 export default function SkillsSection() {
   return (
-    <section id="skills" className="py-20 bg-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+      id="skills"
+      className="py-20 relative overflow-hidden"
+      style={{ background: "linear-gradient(180deg, #060D22 0%, #050A1A 100%)" }}
+    >
+      {/* Ambient glow */}
+      <div
+        className="absolute bottom-0 left-1/4 w-80 h-80 rounded-full opacity-8 blur-3xl pointer-events-none"
+        style={{ background: "radial-gradient(circle, #00FFCC, transparent)" }}
+      />
+      <div
+        className="absolute top-0 right-1/4 w-64 h-64 rounded-full opacity-8 blur-3xl pointer-events-none"
+        style={{ background: "radial-gradient(circle, #7B5EA7, transparent)" }}
+      />
+
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <p className="text-sm text-[#C85C72] font-medium tracking-widest uppercase mb-2">
+        <div className="text-center mb-14">
+          <p className="text-sm font-medium tracking-widest uppercase mb-2" style={{ color: "#00D4FF" }}>
             03 / SKILLS
           </p>
           <h2
-            className="text-3xl sm:text-4xl font-bold text-[#3D2B2B]"
-            style={{ fontFamily: "'Noto Serif SC', serif" }}
+            className="text-3xl sm:text-4xl font-bold mb-3"
+            style={{
+              fontFamily: "'Noto Serif SC', serif",
+              background: "linear-gradient(90deg, #00D4FF, #00FFCC)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
           >
             技能专长 ✨
           </h2>
-          <p className="mt-3 text-[#4A3728]/60 max-w-md mx-auto">
-            在AI评测与数据工程领域持续深耕
-          </p>
+          <p style={{ color: "rgba(160, 200, 240, 0.6)" }}>在AI评测与数据工程领域持续深耕</p>
           <div className="mt-4 flex justify-center">
-            <div className="h-0.5 w-16 bg-gradient-to-r from-[#C85C72] to-[#F4956A] rounded-full" />
+            <div
+              className="h-0.5 w-16 rounded-full"
+              style={{ background: "linear-gradient(90deg, #00D4FF, #7B5EA7)", boxShadow: "0 0 8px rgba(0,212,255,0.4)" }}
+            />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+        {/* Skill Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
           {skillCategories.map((cat) => (
             <div
               key={cat.title}
-              className="rounded-2xl p-6 border border-rose-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-              style={{ background: "linear-gradient(135deg, #FEF6F0, #FFFFFF)" }}
+              className="rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1"
+              style={{
+                background: `${cat.color}06`,
+                border: `1px solid ${cat.color}22`,
+                boxShadow: `0 0 20px ${cat.color}06`,
+              }}
             >
               <div className="flex items-center gap-3 mb-5">
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
-                  style={{ background: `${cat.color}20` }}
+                  style={{ background: `${cat.color}18`, border: `1px solid ${cat.color}30` }}
                 >
                   {cat.icon}
                 </div>
                 <h3
-                  className="font-semibold text-[#3D2B2B]"
-                  style={{ fontFamily: "'Noto Serif SC', serif" }}
+                  className="font-semibold"
+                  style={{ color: cat.color, fontFamily: "'Noto Serif SC', serif" }}
                 >
                   {cat.title}
                 </h3>
@@ -106,17 +128,26 @@ export default function SkillsSection() {
                 {cat.skills.map((skill) => (
                   <div key={skill.name}>
                     <div className="flex justify-between items-center mb-1.5">
-                      <span className="text-sm text-[#4A3728]/80">{skill.name}</span>
-                      <span className="text-xs font-medium" style={{ color: cat.color }}>
+                      <span className="text-sm" style={{ color: "rgba(180,220,255,0.75)" }}>
+                        {skill.name}
+                      </span>
+                      <span
+                        className="text-xs font-semibold"
+                        style={{ color: cat.color, textShadow: `0 0 8px ${cat.color}80` }}
+                      >
                         {skill.level}%
                       </span>
                     </div>
-                    <div className="h-1.5 bg-rose-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-1.5 rounded-full overflow-hidden"
+                      style={{ background: "rgba(255,255,255,0.06)" }}
+                    >
                       <div
-                        className="h-full rounded-full transition-all duration-1000"
+                        className="h-full rounded-full"
                         style={{
                           width: `${skill.level}%`,
-                          background: `linear-gradient(90deg, ${cat.color}, ${cat.color}99)`,
+                          background: `linear-gradient(90deg, ${cat.color}, ${cat.color}88)`,
+                          boxShadow: `0 0 8px ${cat.color}60`,
                         }}
                       />
                     </div>
@@ -127,56 +158,36 @@ export default function SkillsSection() {
           ))}
         </div>
 
-        {/* Tool Tags + Illustration */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-          <div className="lg:col-span-2">
-            <h3
-              className="text-lg font-semibold text-[#3D2B2B] mb-4"
-              style={{ fontFamily: "'Noto Serif SC', serif" }}
-            >
-              🏷️ 技术标签
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {toolTags.map((tag, i) => (
-                <span
-                  key={tag.name}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm cursor-default"
-                  style={{
-                    background: i % 3 === 0
-                      ? "#FEF0F3"
-                      : i % 3 === 1
-                      ? "#FEF4EE"
-                      : "#F5F0FE",
-                    borderColor: i % 3 === 0
-                      ? "#F4A7B9"
-                      : i % 3 === 1
-                      ? "#F4C5A7"
-                      : "#C4B0E8",
-                    color: i % 3 === 0
-                      ? "#C85C72"
-                      : i % 3 === 1
-                      ? "#C87040"
-                      : "#7B5EA7",
-                  }}
-                >
-                  <span>{tag.emoji}</span>
-                  <span>{tag.name}</span>
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex justify-center">
-            <div
-              className="rounded-3xl overflow-hidden shadow-lg animate-float"
-              style={{ width: "220px", height: "220px" }}
-            >
-              <img
-                src={SKILLS_DECO_URL}
-                alt="技能装饰插画"
-                className="w-full h-full object-cover"
-              />
-            </div>
+        {/* Tool Tags */}
+        <div
+          className="rounded-2xl p-6"
+          style={{
+            background: "rgba(0, 212, 255, 0.04)",
+            border: "1px solid rgba(0, 212, 255, 0.12)",
+          }}
+        >
+          <h3
+            className="text-base font-semibold mb-4 flex items-center gap-2"
+            style={{ color: "#00D4FF", fontFamily: "'Noto Serif SC', serif" }}
+          >
+            🏷️ 技术标签
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {toolTags.map((tag) => (
+              <span
+                key={tag.name}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 hover:-translate-y-0.5 cursor-default"
+                style={{
+                  background: `${tag.color}10`,
+                  border: `1px solid ${tag.color}28`,
+                  color: tag.color,
+                  boxShadow: `0 0 8px ${tag.color}15`,
+                }}
+              >
+                <span>{tag.emoji}</span>
+                <span>{tag.name}</span>
+              </span>
+            ))}
           </div>
         </div>
       </div>
