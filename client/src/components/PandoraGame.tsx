@@ -159,30 +159,72 @@ function rectOverlap(ax: number, ay: number, aw: number, ah: number, bx: number,
   return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
 }
 
-function resolveVertical(entity: { x: number; y: number; w: number; h: number; vy: number; onGround: boolean }, platforms: Platform[]) {
-  entity.onGround = false;
+/**
+ * Robust AABB physics step:
+ * 1. Apply horizontal velocity → resolve X overlaps
+ * 2. Apply vertical velocity  → resolve Y overlaps
+ * Only land on TOP of a platform (one-way from above), never clip through sides.
+ */
+function physicsStep(
+  entity: { x: number; y: number; w: number; h: number; vx: number; vy: number; onGround: boolean },
+  platforms: Platform[]
+) {
+  // ── X axis: only push against non-ground platforms ──
+  entity.x += entity.vx;
   for (const p of platforms) {
-    if (rectOverlap(entity.x, entity.y, entity.w, entity.h, p.x, p.y, p.w, p.h)) {
-      if (entity.vy >= 0) {
-        const prevBottom = entity.y + entity.h - entity.vy;
-        if (prevBottom <= p.y + 2) {
-          entity.y = p.y - entity.h;
-          entity.vy = 0;
-          entity.onGround = true;
-        }
+    // Ground tiles are infinite floors – skip horizontal resolution to avoid edge sticking
+    if (p.type === "ground") continue;
+    if (!rectOverlap(entity.x, entity.y, entity.w, entity.h, p.x, p.y, p.w, p.h)) continue;
+    // Only push horizontally if the entity is NOT mostly above the platform
+    // (i.e. don't push sideways when we're just landing on top)
+    const overlapTop = entity.y + entity.h - p.y;
+    if (overlapTop < 8) continue; // very shallow top-overlap → let Y-pass handle it
+    const overlapLeft  = entity.x + entity.w - p.x;
+    const overlapRight = p.x + p.w - entity.x;
+    if (overlapLeft < overlapRight) {
+      entity.x = p.x - entity.w;
+      if (entity.vx > 0) entity.vx = 0;
+    } else {
+      entity.x = p.x + p.w;
+      if (entity.vx < 0) entity.vx = 0;
+    }
+  }
+
+  // ── Y axis ──
+  entity.onGround = false;
+  entity.y += entity.vy;
+  for (const p of platforms) {
+    if (!rectOverlap(entity.x, entity.y, entity.w, entity.h, p.x, p.y, p.w, p.h)) continue;
+    const overlapTop    = entity.y + entity.h - p.y;
+    const overlapBottom = p.y + p.h - entity.y;
+    if (overlapTop < overlapBottom) {
+      // Landed on top – only if falling (vy >= 0) or very small upward speed
+      if (entity.vy >= -1) {
+        entity.y = p.y - entity.h;
+        entity.vy = 0;
+        entity.onGround = true;
       }
+    } else {
+      // Hit ceiling from below
+      entity.y = p.y + p.h;
+      if (entity.vy < 0) entity.vy = 0;
     }
   }
 }
 
-function resolveHorizontal(entity: { x: number; y: number; w: number; h: number; vx: number }, platforms: Platform[]) {
-  for (const p of platforms) {
-    if (p.type !== "ground" && rectOverlap(entity.x, entity.y, entity.w, entity.h, p.x, p.y, p.w, p.h)) {
-      if (entity.vx > 0) entity.x = p.x - entity.w;
-      else if (entity.vx < 0) entity.x = p.x + p.w;
-      entity.vx = 0;
-    }
-  }
+/** Check if entity has solid ground just below its feet (for edge detection) */
+function hasGroundBelow(
+  entity: { x: number; y: number; w: number; h: number },
+  platforms: Platform[],
+  dir: number
+): boolean {
+  // Check a point 1px below the leading foot
+  const footX = dir > 0 ? entity.x + entity.w + 1 : entity.x - 1;
+  const footY = entity.y + entity.h + 1;
+  return platforms.some(p =>
+    footX >= p.x && footX <= p.x + p.w &&
+    footY >= p.y && footY <= p.y + p.h
+  );
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -271,6 +313,14 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
     g.tick++;
     const p = g.player;
 
+    // ── Moving platforms (update first so carry uses latest position) ──
+    for (const plat of g.platforms) {
+      if (plat.type === "moving" && plat.dx !== undefined && plat.range !== undefined && plat.ox !== undefined) {
+        plat.x += plat.dx;
+        if (plat.x > plat.ox + plat.range || plat.x < plat.ox - plat.range) plat.dx *= -1;
+      }
+    }
+
     // ── Player update ──
     if (!p.dead) {
       // Horizontal
@@ -296,19 +346,37 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
         p.shootCooldown = p.arrowLevel >= 2 ? 14 : 20;
       }
 
-      // Physics
+      // Physics - use robust two-pass AABB
       p.vy += GRAVITY;
-      p.x += p.vx;
-      resolveHorizontal(p, g.platforms);
-      p.y += p.vy;
-      resolveVertical(p, g.platforms);
+      physicsStep(p, g.platforms);
+
+      // Moving platform carry: if player is standing on a moving platform, move with it
+      if (p.onGround) {
+        for (const plat of g.platforms) {
+          if (plat.type === "moving" && plat.dx !== undefined) {
+            if (
+              p.x + p.w > plat.x && p.x < plat.x + plat.w &&
+              Math.abs(p.y + p.h - plat.y) < 4
+            ) {
+              p.x += plat.dx;
+            }
+          }
+        }
+      }
 
       // Clamp
       if (p.x < 0) p.x = 0;
       if (p.y > H + 100) { p.hp = 0; }
 
-      // Shield timer
-      if (p.shieldTimer > 0) { p.shieldTimer--; if (p.shieldTimer === 0) p.shield = false; }
+      // Shield/invincibility timer
+      // p.shield = true means shield item is active (blocks damage)
+      // p.shieldTimer > 0 means either shield item OR invincibility frames are active
+      if (p.shieldTimer > 0) {
+        p.shieldTimer--;
+        // Only clear shield item when its own timer runs out (shield item gives 300 ticks)
+        // Invincibility frames (60 ticks from melee hit) don't have p.shield=true
+        if (p.shieldTimer === 0 && p.shield) p.shield = false;
+      }
 
       // Anim
       p.animTimer++;
@@ -329,33 +397,23 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
       }
     }
 
-    // ── Moving platforms ──
-    for (const plat of g.platforms) {
-      if (plat.type === "moving" && plat.dx !== undefined && plat.range !== undefined && plat.ox !== undefined) {
-        plat.x += plat.dx;
-        if (plat.x > plat.ox + plat.range || plat.x < plat.ox - plat.range) plat.dx *= -1;
-      }
-    }
-
     // ── Enemies update ──
     for (const e of g.enemies) {
       if (e.dead) {
         e.deathTimer--;
         continue;
       }
-      // Move
+      // Move - use robust two-pass AABB
       e.vy += GRAVITY;
-      e.x += e.vx;
-      resolveHorizontal(e, g.platforms);
-      e.y += e.vy;
-      resolveVertical(e, g.platforms);
+      physicsStep(e, g.platforms);
 
-      // Reverse at edges
-      const onEdge = !g.platforms.some(pl =>
-        e.x + (e.vx > 0 ? e.w + 2 : -2) >= pl.x && e.x + (e.vx > 0 ? e.w + 2 : -2) <= pl.x + pl.w &&
-        Math.abs((e.y + e.h) - pl.y) < 4
-      );
-      if (onEdge && e.onGround && e.type !== "boss") { e.vx *= -1; e.dir *= -1; }
+      // Reverse at edges using hasGroundBelow helper
+      if (e.onGround && e.type !== "boss") {
+        if (!hasGroundBelow(e, g.platforms, e.vx > 0 ? 1 : -1)) {
+          e.vx *= -1;
+          e.dir *= -1;
+        }
+      }
 
       // Clamp speed
       const maxSpd = e.type === "boss" ? 2 : e.type === "mech" ? 1.2 : 1.8;
@@ -389,15 +447,22 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
       }
 
       // Melee damage
-      if (!p.dead && rectOverlap(p.x, p.y, p.w, p.h, e.x, e.y, e.w, e.h)) {
+      // Skip if in invincibility frames (!p.shield && shieldTimer>0) or if shield item active
+      const inIframes = p.shieldTimer > 0 && !p.shield;
+      if (!p.dead && !inIframes && rectOverlap(p.x, p.y, p.w, p.h, e.x, e.y, e.w, e.h)) {
         if (!p.shield) {
           p.hp--;
+          // Grant brief invincibility frames (60 ticks) after melee hit
+          p.shieldTimer = 60;
           spawnParticles(p.x + p.w / 2, p.y, "#FF4444", 6, 3);
         } else {
+          // Shield item absorbs the hit
           p.shield = false; p.shieldTimer = 0;
           spawnParticles(p.x + p.w / 2, p.y, "#00FFCC", 8, 4);
         }
-        p.vy = -8; p.vx = e.dir * 5;
+        // Knockback away from enemy
+        const kbDir = p.x > e.x ? 1 : -1;
+        p.vy = -7; p.vx = kbDir * 5;
       }
     }
     g.enemies = g.enemies.filter(e => !e.dead || e.deathTimer > 0);
@@ -532,9 +597,14 @@ export default function PandoraGame({ onClose }: { onClose: () => void }) {
       drawBullet(ctx, b);
     }
 
-    // Draw player
-    if (!p.dead || Math.floor(p.deathTimer / 5) % 2 === 0) {
-      drawPlayer(ctx, p, g.tick);
+    // Draw player (flash during invincibility frames)
+    const inIframesDraw = p.shieldTimer > 0 && !p.shield;
+    const shouldDrawPlayer = !p.dead || Math.floor(p.deathTimer / 5) % 2 === 0;
+    if (shouldDrawPlayer) {
+      // Flicker every 4 ticks during invincibility frames
+      if (!inIframesDraw || Math.floor(g.tick / 4) % 2 === 0) {
+        drawPlayer(ctx, p, g.tick);
+      }
     }
 
     ctx.restore();
