@@ -1,7 +1,9 @@
 /**
  * Design: 潘多拉星球生物发光蓝色主题 - 技能专长区域
- * Style: 深蓝卡片 + 发光进度条 + 标签云
+ * Background: 潘多拉水下+森林背景（含伊鲁、图鲁克、班西）+ 深蓝遮罩
  */
+
+const PANDORA_SKILLS_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-about-bg-iHXzZJMKMkoBH3WsFy6dpX.webp";
 
 const skillCategories = [
   {
@@ -59,16 +61,18 @@ export default function SkillsSection() {
     <section
       id="skills"
       className="py-20 relative overflow-hidden"
-      style={{ background: "linear-gradient(180deg, #060D22 0%, #050A1A 100%)" }}
     >
-      {/* Ambient glow */}
+      {/* Pandora Background */}
       <div
-        className="absolute bottom-0 left-1/4 w-80 h-80 rounded-full opacity-8 blur-3xl pointer-events-none"
-        style={{ background: "radial-gradient(circle, #00FFCC, transparent)" }}
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${PANDORA_SKILLS_BG})` }}
       />
       <div
-        className="absolute top-0 right-1/4 w-64 h-64 rounded-full opacity-8 blur-3xl pointer-events-none"
-        style={{ background: "radial-gradient(circle, #7B5EA7, transparent)" }}
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(5,10,26,0.9) 0%, rgba(5,10,26,0.78) 50%, rgba(5,10,26,0.9) 100%)",
+        }}
       />
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -88,7 +92,7 @@ export default function SkillsSection() {
           >
             技能专长 ✨
           </h2>
-          <p style={{ color: "rgba(160, 200, 240, 0.6)" }}>在AI评测与数据工程领域持续深耕</p>
+          <p style={{ color: "rgba(160, 200, 240, 0.7)" }}>在AI评测与数据工程领域持续深耕</p>
           <div className="mt-4 flex justify-center">
             <div
               className="h-0.5 w-16 rounded-full"
@@ -104,9 +108,9 @@ export default function SkillsSection() {
               key={cat.title}
               className="rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1"
               style={{
-                background: `${cat.color}06`,
-                border: `1px solid ${cat.color}22`,
-                boxShadow: `0 0 20px ${cat.color}06`,
+                background: "rgba(5,10,26,0.75)",
+                border: `1px solid ${cat.color}25`,
+                backdropFilter: "blur(12px)",
               }}
             >
               <div className="flex items-center gap-3 mb-5">
@@ -128,7 +132,7 @@ export default function SkillsSection() {
                 {cat.skills.map((skill) => (
                   <div key={skill.name}>
                     <div className="flex justify-between items-center mb-1.5">
-                      <span className="text-sm" style={{ color: "rgba(180,220,255,0.75)" }}>
+                      <span className="text-sm" style={{ color: "rgba(180,220,255,0.8)" }}>
                         {skill.name}
                       </span>
                       <span
@@ -140,7 +144,7 @@ export default function SkillsSection() {
                     </div>
                     <div
                       className="h-1.5 rounded-full overflow-hidden"
-                      style={{ background: "rgba(255,255,255,0.06)" }}
+                      style={{ background: "rgba(255,255,255,0.08)" }}
                     >
                       <div
                         className="h-full rounded-full"
@@ -162,8 +166,9 @@ export default function SkillsSection() {
         <div
           className="rounded-2xl p-6"
           style={{
-            background: "rgba(0, 212, 255, 0.04)",
-            border: "1px solid rgba(0, 212, 255, 0.12)",
+            background: "rgba(5,10,26,0.75)",
+            border: "1px solid rgba(0, 212, 255, 0.15)",
+            backdropFilter: "blur(12px)",
           }}
         >
           <h3

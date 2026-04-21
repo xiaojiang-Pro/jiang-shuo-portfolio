@@ -1,8 +1,10 @@
 /**
  * Design: 潘多拉星球生物发光蓝色主题 - 工作经历区域
- * Layout: 时间轴 + 可展开项目卡片
+ * Background: 潘多拉技能背景图（含伊鲁、图鲁克、班西）+ 深蓝遮罩
  */
 import { useState } from "react";
+
+const PANDORA_EXP_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-skills-bg-PcxojTC7asuMX4TkebGUuF.webp";
 
 const experiences = [
   {
@@ -75,12 +77,18 @@ export default function ExperienceSection() {
     <section
       id="experience"
       className="py-20 relative overflow-hidden"
-      style={{ background: "linear-gradient(180deg, #050A1A 0%, #060D22 100%)" }}
     >
-      {/* Ambient glow */}
+      {/* Pandora Background */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full opacity-5 blur-3xl pointer-events-none"
-        style={{ background: "radial-gradient(circle, #00D4FF, transparent)" }}
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${PANDORA_EXP_BG})` }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(5,10,26,0.9) 0%, rgba(5,10,26,0.78) 50%, rgba(5,10,26,0.9) 100%)",
+        }}
       />
 
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -100,7 +108,7 @@ export default function ExperienceSection() {
           >
             工作经历 💼
           </h2>
-          <p style={{ color: "rgba(160, 200, 240, 0.6)" }}>每一段经历都是成长的印记</p>
+          <p style={{ color: "rgba(160, 200, 240, 0.7)" }}>每一段经历都是成长的印记</p>
           <div className="mt-4 flex justify-center">
             <div
               className="h-0.5 w-16 rounded-full"
@@ -117,9 +125,9 @@ export default function ExperienceSection() {
               <div
                 className="rounded-2xl p-5 mb-4"
                 style={{
-                  background: `${exp.color}08`,
-                  border: `1px solid ${exp.color}25`,
-                  boxShadow: `0 0 20px ${exp.color}08`,
+                  background: "rgba(5,10,26,0.75)",
+                  border: `1px solid ${exp.color}28`,
+                  backdropFilter: "blur(12px)",
                 }}
               >
                 <div className="flex items-center gap-4">
@@ -164,8 +172,9 @@ export default function ExperienceSection() {
                       key={proj.title}
                       className="rounded-xl overflow-hidden transition-all duration-200"
                       style={{
-                        background: "rgba(0, 212, 255, 0.04)",
-                        border: "1px solid rgba(0, 212, 255, 0.12)",
+                        background: "rgba(5,10,26,0.72)",
+                        border: "1px solid rgba(0, 212, 255, 0.15)",
+                        backdropFilter: "blur(10px)",
                       }}
                     >
                       <button
@@ -206,9 +215,9 @@ export default function ExperienceSection() {
                                   key={tag}
                                   className="text-xs px-2 py-0.5 rounded-full"
                                   style={{
-                                    background: "rgba(123,94,167,0.12)",
-                                    color: "rgba(180,150,255,0.8)",
-                                    border: "1px solid rgba(123,94,167,0.2)",
+                                    background: "rgba(123,94,167,0.15)",
+                                    color: "rgba(180,150,255,0.85)",
+                                    border: "1px solid rgba(123,94,167,0.25)",
                                   }}
                                 >
                                   {tag}
@@ -231,11 +240,11 @@ export default function ExperienceSection() {
                       {isOpen && (
                         <div
                           className="px-5 pb-4"
-                          style={{ borderTop: "1px solid rgba(0,212,255,0.08)" }}
+                          style={{ borderTop: "1px solid rgba(0,212,255,0.1)" }}
                         >
                           <p
                             className="text-sm leading-relaxed pt-3"
-                            style={{ color: "rgba(160,200,240,0.7)" }}
+                            style={{ color: "rgba(160,200,240,0.75)" }}
                           >
                             {proj.detail}
                           </p>

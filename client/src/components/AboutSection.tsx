@@ -1,9 +1,9 @@
 /**
  * Design: 潘多拉星球生物发光蓝色主题 - 关于我区域
- * Background: 深蓝半透明卡片 + 发光边框
+ * Background: 潘多拉森林背景图（含迪雷马、锤头兽、狼）+ 深蓝遮罩
  */
 
-const AI_ILLUSTRATION_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-avatar-bg-5qBQ8e6fbDJPJSpqR2RwDP.webp";
+const PANDORA_ABOUT_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-about-bg-iHXzZJMKMkoBH3WsFy6dpX.webp";
 
 const personalInfo = [
   { icon: "👤", label: "姓名", value: "姜硕" },
@@ -47,16 +47,19 @@ export default function AboutSection() {
     <section
       id="about"
       className="py-20 relative overflow-hidden"
-      style={{ background: "linear-gradient(180deg, #050A1A 0%, #080F28 50%, #050A1A 100%)" }}
     >
-      {/* Ambient glow blobs */}
+      {/* Pandora Background */}
       <div
-        className="absolute top-20 left-10 w-72 h-72 rounded-full opacity-10 blur-3xl pointer-events-none"
-        style={{ background: "radial-gradient(circle, #00D4FF, transparent)" }}
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${PANDORA_ABOUT_BG})` }}
       />
+      {/* Dark overlay for readability */}
       <div
-        className="absolute bottom-20 right-10 w-80 h-80 rounded-full opacity-8 blur-3xl pointer-events-none"
-        style={{ background: "radial-gradient(circle, #7B5EA7, transparent)" }}
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(5,10,26,0.88) 0%, rgba(5,10,26,0.75) 40%, rgba(5,10,26,0.85) 100%)",
+        }}
       />
 
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -76,7 +79,7 @@ export default function AboutSection() {
           >
             关于我 🌿
           </h2>
-          <p style={{ color: "rgba(160, 200, 240, 0.6)" }}>一个热爱AI、热爱探索的年轻人</p>
+          <p style={{ color: "rgba(160, 200, 240, 0.7)" }}>一个热爱AI、热爱探索的年轻人</p>
           <div className="mt-4 flex justify-center">
             <div
               className="h-0.5 w-16 rounded-full"
@@ -92,9 +95,10 @@ export default function AboutSection() {
             <div
               className="rounded-2xl p-6"
               style={{
-                background: "rgba(0, 212, 255, 0.05)",
-                border: "1px solid rgba(0, 212, 255, 0.18)",
-                boxShadow: "0 0 30px rgba(0, 212, 255, 0.06)",
+                background: "rgba(5,10,26,0.7)",
+                border: "1px solid rgba(0, 212, 255, 0.22)",
+                boxShadow: "0 0 30px rgba(0, 212, 255, 0.08)",
+                backdropFilter: "blur(12px)",
               }}
             >
               <h3
@@ -107,7 +111,7 @@ export default function AboutSection() {
                 {personalInfo.map((item) => (
                   <div key={item.label} className="flex items-center gap-3">
                     <span className="text-base w-6 text-center">{item.icon}</span>
-                    <span className="text-sm w-20 shrink-0" style={{ color: "rgba(160,200,240,0.5)" }}>
+                    <span className="text-sm w-20 shrink-0" style={{ color: "rgba(160,200,240,0.55)" }}>
                       {item.label}
                     </span>
                     <span className="text-sm font-medium" style={{ color: "rgba(200, 230, 255, 0.9)" }}>
@@ -122,8 +126,9 @@ export default function AboutSection() {
             <div
               className="rounded-2xl p-6"
               style={{
-                background: "rgba(123, 94, 167, 0.07)",
-                border: "1px solid rgba(123, 94, 167, 0.25)",
+                background: "rgba(5,10,26,0.7)",
+                border: "1px solid rgba(123, 94, 167, 0.28)",
+                backdropFilter: "blur(12px)",
               }}
             >
               <h3
@@ -155,55 +160,34 @@ export default function AboutSection() {
             </div>
           </div>
 
-          {/* Right: Illustration + Advantages */}
-          <div className="space-y-6">
-            {/* Illustration */}
-            <div className="flex justify-center">
+          {/* Right: Advantages Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 content-start">
+            {advantages.map((adv) => (
               <div
-                className="rounded-3xl overflow-hidden animate-float"
+                key={adv.title}
+                className="rounded-xl p-5 transition-all duration-200 hover:-translate-y-1"
                 style={{
-                  width: "260px",
-                  height: "200px",
-                  border: "1px solid rgba(0,212,255,0.2)",
-                  boxShadow: "0 0 30px rgba(0,212,255,0.12)",
+                  background: "rgba(5,10,26,0.72)",
+                  border: `1px solid ${adv.color}28`,
+                  backdropFilter: "blur(12px)",
                 }}
               >
-                <img
-                  src={AI_ILLUSTRATION_URL}
-                  alt="潘多拉森林插画"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-
-            {/* Advantages Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {advantages.map((adv) => (
-                <div
-                  key={adv.title}
-                  className="rounded-xl p-4 transition-all duration-200 hover:-translate-y-0.5"
-                  style={{
-                    background: `${adv.color}08`,
-                    border: `1px solid ${adv.color}25`,
-                  }}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <span
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-base"
-                      style={{ background: `${adv.color}18` }}
-                    >
-                      {adv.icon}
-                    </span>
-                    <h4 className="text-sm font-semibold" style={{ color: adv.color }}>
-                      {adv.title}
-                    </h4>
-                  </div>
-                  <p className="text-xs leading-relaxed" style={{ color: "rgba(160,200,240,0.65)" }}>
-                    {adv.desc}
-                  </p>
+                <div className="flex items-center gap-2 mb-3">
+                  <span
+                    className="w-9 h-9 rounded-lg flex items-center justify-center text-lg"
+                    style={{ background: `${adv.color}18` }}
+                  >
+                    {adv.icon}
+                  </span>
+                  <h4 className="text-sm font-semibold" style={{ color: adv.color }}>
+                    {adv.title}
+                  </h4>
                 </div>
-              ))}
-            </div>
+                <p className="text-xs leading-relaxed" style={{ color: "rgba(160,200,240,0.7)" }}>
+                  {adv.desc}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </div>

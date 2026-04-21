@@ -1,9 +1,10 @@
 /**
  * Design: 潘多拉星球生物发光蓝色主题 - 联系我区域
- * 新增: 微信二维码展示
- * Layout: 联系信息卡片 + 微信二维码
+ * Background: 潘多拉灵魂之树背景（含木精灵、班西）+ 深蓝遮罩
+ * Fix: 微信二维码完整显示（含昵称和头像区域）
  */
 
+const PANDORA_CONTACT_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-contact-bg-bcpx2qs3QySQSGWFPjhv9J.webp";
 const WECHAT_QR = "/manus-storage/wechat-qr_acc07144.jpg";
 
 const contactItems = [
@@ -35,16 +36,18 @@ export default function ContactSection() {
     <section
       id="contact"
       className="py-20 relative overflow-hidden"
-      style={{ background: "linear-gradient(180deg, #050A1A 0%, #060D22 50%, #050A1A 100%)" }}
     >
-      {/* Ambient glow blobs */}
+      {/* Pandora Background */}
       <div
-        className="absolute top-0 left-0 w-72 h-72 rounded-full opacity-10 blur-3xl pointer-events-none"
-        style={{ background: "radial-gradient(circle, #00D4FF, transparent)" }}
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${PANDORA_CONTACT_BG})` }}
       />
       <div
-        className="absolute bottom-0 right-0 w-80 h-80 rounded-full opacity-8 blur-3xl pointer-events-none"
-        style={{ background: "radial-gradient(circle, #7B5EA7, transparent)" }}
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(5,10,26,0.88) 0%, rgba(5,10,26,0.75) 40%, rgba(5,10,26,0.88) 100%)",
+        }}
       />
 
       <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,7 +67,7 @@ export default function ContactSection() {
           >
             一起探索AI的无限可能 🌿
           </h2>
-          <p className="max-w-lg mx-auto leading-relaxed" style={{ color: "rgba(160, 200, 240, 0.65)" }}>
+          <p className="max-w-lg mx-auto leading-relaxed" style={{ color: "rgba(160, 200, 240, 0.7)" }}>
             无论是AI评测合作、数据工程项目，还是想聊聊大模型的有趣话题，
             都欢迎随时联系我！每一次连接都是新故事的开始。
           </p>
@@ -82,7 +85,7 @@ export default function ContactSection() {
           <div className="space-y-4">
             <h3
               className="text-base font-semibold mb-5"
-              style={{ color: "rgba(200,230,255,0.85)", fontFamily: "'Noto Serif SC', serif" }}
+              style={{ color: "rgba(200,230,255,0.9)", fontFamily: "'Noto Serif SC', serif" }}
             >
               📡 联系方式
             </h3>
@@ -92,9 +95,9 @@ export default function ContactSection() {
                 href={item.href}
                 className="group flex items-center gap-4 rounded-2xl p-5 transition-all duration-200 hover:-translate-y-0.5 block"
                 style={{
-                  background: `${item.color}07`,
+                  background: "rgba(5,10,26,0.72)",
                   border: `1px solid ${item.color}22`,
-                  boxShadow: `0 0 16px ${item.color}06`,
+                  backdropFilter: "blur(12px)",
                   textDecoration: "none",
                 }}
               >
@@ -136,10 +139,11 @@ export default function ContactSection() {
                 href="tel:17664042185"
                 className="flex-1 inline-flex items-center justify-center gap-2 py-3 rounded-full font-semibold text-sm transition-all duration-200 hover:scale-105"
                 style={{
-                  background: "rgba(0, 212, 255, 0.1)",
+                  background: "rgba(5,10,26,0.7)",
                   border: "1.5px solid rgba(0, 212, 255, 0.4)",
                   color: "#00D4FF",
                   textDecoration: "none",
+                  backdropFilter: "blur(8px)",
                 }}
               >
                 📱 拨打电话
@@ -147,36 +151,38 @@ export default function ContactSection() {
             </div>
           </div>
 
-          {/* Right: WeChat QR Code */}
+          {/* Right: WeChat QR Code - 完整显示含昵称和头像 */}
           <div className="flex flex-col items-center">
             <h3
               className="text-base font-semibold mb-5 self-start"
-              style={{ color: "rgba(200,230,255,0.85)", fontFamily: "'Noto Serif SC', serif" }}
+              style={{ color: "rgba(200,230,255,0.9)", fontFamily: "'Noto Serif SC', serif" }}
             >
               💬 微信扫码添加
             </h3>
             <div
               className="rounded-3xl p-5 flex flex-col items-center gap-4 w-full max-w-xs"
               style={{
-                background: "rgba(0, 212, 255, 0.05)",
-                border: "1px solid rgba(0, 212, 255, 0.2)",
-                boxShadow: "0 0 40px rgba(0, 212, 255, 0.1)",
+                background: "rgba(5,10,26,0.78)",
+                border: "1px solid rgba(0, 212, 255, 0.25)",
+                boxShadow: "0 0 40px rgba(0, 212, 255, 0.12)",
+                backdropFilter: "blur(14px)",
               }}
             >
-              {/* QR Code Image */}
+              {/* QR Code Image - 完整显示，包含顶部昵称和头像区域 */}
               <div
-                className="rounded-2xl overflow-hidden"
+                className="rounded-2xl overflow-hidden w-full"
                 style={{
                   border: "2px solid rgba(0, 212, 255, 0.3)",
                   boxShadow: "0 0 20px rgba(0, 212, 255, 0.15)",
-                  width: "220px",
-                  height: "220px",
+                  /* 使用 aspect-ratio 保持原始比例，确保完整显示 */
+                  aspectRatio: "1 / 1.25",
                 }}
               >
                 <img
                   src={WECHAT_QR}
                   alt="微信二维码 - 五十弦"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full"
+                  style={{ objectFit: "contain", background: "#fff" }}
                 />
               </div>
 
@@ -188,7 +194,7 @@ export default function ContactSection() {
                 >
                   微信：五十弦
                 </p>
-                <p className="text-xs" style={{ color: "rgba(160,200,240,0.55)" }}>
+                <p className="text-xs" style={{ color: "rgba(160,200,240,0.6)" }}>
                   扫一扫上面的二维码，加我为朋友
                 </p>
               </div>
@@ -212,7 +218,7 @@ export default function ContactSection() {
         </div>
 
         {/* Footer note */}
-        <p className="mt-12 text-center text-sm" style={{ color: "rgba(160,200,240,0.3)" }}>
+        <p className="mt-12 text-center text-sm" style={{ color: "rgba(160,200,240,0.35)" }}>
           期待与你在星际相遇 🌿✨
         </p>
       </div>
