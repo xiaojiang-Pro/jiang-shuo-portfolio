@@ -1,8 +1,9 @@
 /**
  * Design: 潘多拉星球生物发光蓝色主题 - Hero区域
  * Background: 潘多拉森林全幅背景图 + 深蓝渐变遮罩
- * Layout: 左文字右头像，飘浮粒子动效
+ * Layout: 左文字右头像，飘浮粒子动效，首页正中央图鲁克图标
  */
+import LeonopteryxIcon from "./LeonopteryxIcon";
 
 const PANDORA_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-hero-bg-AG8kWN8yY4rv4DesiF2sH8.webp";
 const AVATAR_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/hero-avatar-male-v2-7AfMs8txXHb7S2VHpsr6M2.webp";
@@ -257,6 +258,11 @@ export default function HeroSection() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Leonopteryx Center Icon - 图鲁克正中央图标 */}
+        <div className="flex justify-center mt-10 mb-2">
+          <LeonopteryxIcon />
         </div>
 
         {/* Scroll indicator */}
