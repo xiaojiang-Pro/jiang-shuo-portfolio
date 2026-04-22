@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 
-const LEONOPTERYX_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/leonopteryx-v3-SJqZYUPHhc46fgTySehQuS.webp";
+const LEONOPTERYX_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/leonopteryx-v4-BR8sktrp4obDNKkyF7y3up.webp";
 
 export default function LeonopteryxIcon() {
   const [hovered, setHovered] = useState(false);
