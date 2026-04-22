@@ -1,12 +1,17 @@
 /**
- * Design: 潘多拉星球 - 图鲁克（大霸王翼兽/Great Leonopteryx）写实图片图标
- * 外形特征：橙黄底色+深蓝黑条纹+蓝色冠翼，六肢，锋利尖牙，写实质感
- * 交互：鼠标悬停时发光增强 + 轻微震动 + TORUK MAKTO 文字出现
+ * Design: 潘多拉星球 - 图鲁克（大霸王翼兽/Great Leonopteryx）官方图片展示
+ * 使用用户提供的三张官方图鲁克图片，分别放置在网站不同位置
+ * 图1（头部特写艺术图）→ 底部装饰区
+ * 图2（仰视飞翔全身）→ 中间区域
+ * 图3（飞行仰视特写）→ 顶部区域
  */
 
 import { useState } from "react";
 
-const LEONOPTERYX_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/leonopteryx-v4-BR8sktrp4obDNKkyF7y3up.webp";
+// 用户提供的三张官方图鲁克图片
+export const TORUK_IMG_1 = "/manus-storage/toruk-official-1_032fd85d.webp"; // 飞行仰视图（蓝天背景）
+export const TORUK_IMG_2 = "/manus-storage/toruk-official-2_e6bf0ffc.jpg";  // 仰视飞翔全身（金黄翼膜）
+export const TORUK_IMG_3 = "/manus-storage/toruk-official-3_e4509d11.jpg";  // 头部特写艺术图（蓝色背景）
 
 export default function LeonopteryxIcon() {
   const [hovered, setHovered] = useState(false);
@@ -38,7 +43,7 @@ export default function LeonopteryxIcon() {
         ✦ TORUK MAKTO ✦
       </div>
 
-      {/* Image Icon */}
+      {/* Image Icon - 使用第一张官方图（飞行仰视蓝天） */}
       <div
         style={{
           filter: hovered
@@ -47,17 +52,18 @@ export default function LeonopteryxIcon() {
           transform: hovered ? "scale(1.08)" : "scale(1)",
           transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
           animation: hovered ? "leonopteryx-roar 0.4s ease-in-out" : "leonopteryx-float 4s ease-in-out infinite",
-          width: "360px",
+          width: "380px",
           height: "240px",
         }}
       >
         <img
-          src={LEONOPTERYX_IMG}
+          src={TORUK_IMG_1}
           alt="图鲁克 - 潘多拉最强飞行生物"
           style={{
             width: "100%",
             height: "100%",
-            objectFit: "contain",
+            objectFit: "cover",
+            borderRadius: "12px",
           }}
         />
       </div>

@@ -3,6 +3,8 @@
  * Background: 潘多拉水下+森林背景（含伊鲁、图鲁克、班西）+ 深蓝遮罩
  */
 
+import { TORUK_IMG_1 } from "./LeonopteryxIcon";
+
 const PANDORA_SKILLS_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-contact-bg-v2-Bh7mNkQPJrLxWtYpFe2cA8.webp";
 
 const skillCategories = [
@@ -160,6 +162,54 @@ export default function SkillsSection() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Toruk Official Image - 中间官方图鲁克图片（飞行仰视蓝天） */}
+        <div className="flex justify-center my-10">
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              maxWidth: "800px",
+              borderRadius: "20px",
+              overflow: "hidden",
+              boxShadow: "0 0 80px rgba(255,107,43,0.25), 0 20px 60px rgba(0,0,0,0.5)",
+              border: "1px solid rgba(255,140,64,0.2)",
+            }}
+          >
+            <img
+              src={TORUK_IMG_1}
+              alt="图鲁克飞行 - 阿凡达官方形象"
+              style={{
+                width: "100%",
+                height: "260px",
+                objectFit: "cover",
+                objectPosition: "center",
+                display: "block",
+              }}
+            />
+            <div style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(to right, rgba(5,10,26,0.5) 0%, transparent 30%, transparent 70%, rgba(5,10,26,0.5) 100%)",
+            }} />
+            <div style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              color: "rgba(255,255,255,0.85)",
+              fontSize: "13px",
+              letterSpacing: "8px",
+              fontFamily: "'Playfair Display', serif",
+              fontWeight: 700,
+              textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 0 40px rgba(255,107,43,0.4)",
+              whiteSpace: "nowrap",
+              textAlign: "center",
+            }}>
+              TORUK MAKTO
+            </div>
+          </div>
         </div>
 
         {/* Tool Tags */}

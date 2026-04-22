@@ -3,7 +3,7 @@
  * Background: 潘多拉森林全幅背景图 + 深蓝渐变遮罩
  * Layout: 左文字右头像，飘浮粒子动效，首页正中央图鲁克图标
  */
-import LeonopteryxIcon from "./LeonopteryxIcon";
+import LeonopteryxIcon, { TORUK_IMG_2 } from "./LeonopteryxIcon";
 
 const PANDORA_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-hero-bg-AG8kWN8yY4rv4DesiF2sH8.webp";
 const AVATAR_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/hero-avatar-male-v3-N2AogMkpjgmpeP62wYmVnr.webp";
@@ -260,9 +260,56 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Leonopteryx Center Icon - 图鲁克正中央图标 */}
-        <div className="flex justify-center mt-10 mb-2">
-          <LeonopteryxIcon />
+        {/* Toruk Official Image - 顶部官方图鲁克图片（仰视飞翔全身，金黄翼膜） */}
+        <div className="flex justify-center mt-10 mb-2 relative">
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              maxWidth: "700px",
+              borderRadius: "16px",
+              overflow: "hidden",
+              boxShadow: "0 0 60px rgba(255,107,43,0.3), 0 0 120px rgba(0,212,255,0.15)",
+              border: "1px solid rgba(255,107,43,0.25)",
+            }}
+          >
+            <img
+              src={TORUK_IMG_2}
+              alt="图鲁克 - 阿凡达官方形象"
+              style={{
+                width: "100%",
+                height: "320px",
+                objectFit: "cover",
+                objectPosition: "center top",
+                display: "block",
+              }}
+            />
+            {/* 渐隐遮罩 */}
+            <div style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: "80px",
+              background: "linear-gradient(to bottom, transparent, rgba(5,10,26,0.9))",
+            }} />
+            {/* 标题 */}
+            <div style={{
+              position: "absolute",
+              bottom: "16px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              color: "rgba(255,140,64,0.9)",
+              fontSize: "12px",
+              letterSpacing: "6px",
+              fontFamily: "'Playfair Display', serif",
+              fontWeight: 700,
+              textShadow: "0 0 16px rgba(255,107,43,0.8)",
+              whiteSpace: "nowrap",
+            }}>
+              ✦ TORUK · 潘多拉最强飞行生物 ✦
+            </div>
+          </div>
         </div>
 
         {/* Scroll indicator */}
