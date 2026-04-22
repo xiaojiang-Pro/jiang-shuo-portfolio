@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 
-const LEONOPTERYX_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/leonopteryx-v2-GzeSYsZMYoj5cwRcrVeEBd.webp";
+const LEONOPTERYX_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/leonopteryx-v3-SJqZYUPHhc46fgTySehQuS.webp";
 
 export default function LeonopteryxIcon() {
   const [hovered, setHovered] = useState(false);
@@ -47,8 +47,8 @@ export default function LeonopteryxIcon() {
           transform: hovered ? "scale(1.08)" : "scale(1)",
           transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
           animation: hovered ? "leonopteryx-roar 0.4s ease-in-out" : "leonopteryx-float 4s ease-in-out infinite",
-          width: "220px",
-          height: "220px",
+          width: "360px",
+          height: "240px",
         }}
       >
         <img
