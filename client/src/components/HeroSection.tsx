@@ -333,7 +333,7 @@ export default function HeroSection() {
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
           <span className="text-xs tracking-widest" style={{ color: "rgba(0, 212, 255, 0.5)" }}>
-            SCROLL
+            
           </span>
           <div
             className="w-0.5 h-8 rounded-full"
