@@ -5,7 +5,7 @@
  */
 
 const PANDORA_CONTACT_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-contact-bg-bcpx2qs3QySQSGWFPjhv9J.webp";
-const WECHAT_QR = "/manus-storage/wechat-qr_acc07144.jpg";
+const WECHAT_QR = "/images/wechat-qrcode.jpg";
 
 const contactItems = [
   {
