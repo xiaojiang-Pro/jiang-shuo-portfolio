@@ -60,10 +60,14 @@ export default function Footer() {
         <div
           style={{
             position: "absolute",
-            top: "50%",
+            bottom: "110px",
             left: "50%",
-            transform: "translate(-50%, -50%)",
+            transform: "translateX(-50%)",
             textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "10px",
           }}
         >
           <div
@@ -84,9 +88,9 @@ export default function Footer() {
               color: "rgba(0,212,255,0.7)",
               fontSize: "11px",
               letterSpacing: "4px",
-              marginTop: "8px",
               fontFamily: "'Playfair Display', serif",
               textShadow: "0 0 16px rgba(0,212,255,0.5)",
+              whiteSpace: "nowrap",
             }}
           >
             潘多拉最强飞行生物
