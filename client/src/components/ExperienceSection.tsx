@@ -4,7 +4,7 @@
  */
 import { useState } from "react";
 
-const PANDORA_EXP_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-skills-bg-PcxojTC7asuMX4TkebGUuF.webp";
+const PANDORA_EXP_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-skills-bg-v2-DckCC3TxcynGKk6w82yTPe.webp";
 
 const experiences = [
   {

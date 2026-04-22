@@ -3,7 +3,7 @@
  * Background: 潘多拉森林背景图（含迪雷马、锤头兽、狼）+ 深蓝遮罩
  */
 
-const PANDORA_ABOUT_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-about-bg-iHXzZJMKMkoBH3WsFy6dpX.webp";
+const PANDORA_ABOUT_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-about-bg-v2-C2eV5KCS8tLDJTXXJe3bGp.webp";
 
 const personalInfo = [
   { icon: "👤", label: "姓名", value: "姜硕" },

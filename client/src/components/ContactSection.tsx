@@ -4,7 +4,7 @@
  * Fix: 微信二维码完整显示（含昵称和头像区域）
  */
 
-const PANDORA_CONTACT_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-contact-bg-bcpx2qs3QySQSGWFPjhv9J.webp";
+const PANDORA_CONTACT_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-contact-bg-v2-Bh7mNkQPJrLxWtYpFe2cA8.webp";
 const WECHAT_QR = "/images/wechat-qrcode.jpg";
 
 const contactItems = [

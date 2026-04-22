@@ -3,7 +3,7 @@
  * Background: 潘多拉水下+森林背景（含伊鲁、图鲁克、班西）+ 深蓝遮罩
  */
 
-const PANDORA_SKILLS_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-about-bg-iHXzZJMKMkoBH3WsFy6dpX.webp";
+const PANDORA_SKILLS_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-contact-bg-v2-Bh7mNkQPJrLxWtYpFe2cA8.webp";
 
 const skillCategories = [
   {
