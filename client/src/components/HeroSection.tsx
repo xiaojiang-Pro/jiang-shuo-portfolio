@@ -6,7 +6,7 @@
 import LeonopteryxIcon from "./LeonopteryxIcon";
 
 const PANDORA_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/pandora-hero-bg-AG8kWN8yY4rv4DesiF2sH8.webp";
-const AVATAR_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/hero-avatar-male-v2-7AfMs8txXHb7S2VHpsr6M2.webp";
+const AVATAR_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663574304740/nQvUHMbHVRipno43td8H67/hero-avatar-male-v3-N2AogMkpjgmpeP62wYmVnr.webp";
 
 const particles = Array.from({ length: 18 }, (_, i) => ({
   id: i,
