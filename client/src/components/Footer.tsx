@@ -4,7 +4,11 @@
  */
 import { TORUK_IMG_3 } from "./LeonopteryxIcon";
 
-export default function Footer() {
+interface FooterProps {
+  onOpenLightbox: (index: number) => void;
+}
+
+export default function Footer({ onOpenLightbox }: FooterProps) {
   return (
     <footer
       className="relative"
@@ -15,12 +19,17 @@ export default function Footer() {
     >
       {/* Toruk Official Image - 底部官方图鲁克图片（头部特写艺术图） */}
       <div
+        onClick={() => onOpenLightbox(2)}
         style={{
           position: "relative",
           width: "100%",
           overflow: "hidden",
           height: "320px",
+          cursor: "pointer",
+          transition: "filter 0.25s ease",
         }}
+        onMouseEnter={e => (e.currentTarget.style.filter = "brightness(1.1)")}
+        onMouseLeave={e => (e.currentTarget.style.filter = "brightness(1)")}
       >
         <img
           src={TORUK_IMG_3}

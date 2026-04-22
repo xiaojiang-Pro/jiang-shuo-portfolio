@@ -16,7 +16,11 @@ const particles = Array.from({ length: 18 }, (_, i) => ({
   duration: Math.random() * 3 + 3,
 }));
 
-export default function HeroSection() {
+interface HeroSectionProps {
+  onOpenLightbox: (index: number) => void;
+}
+
+export default function HeroSection({ onOpenLightbox }: HeroSectionProps) {
   return (
     <section
       id="home"
@@ -263,6 +267,7 @@ export default function HeroSection() {
         {/* Toruk Official Image - 顶部官方图鲁克图片（仰视飞翔全身，金黄翼膜） */}
         <div className="flex justify-center mt-10 mb-2 relative">
           <div
+            onClick={() => onOpenLightbox(0)}
             style={{
               position: "relative",
               width: "100%",
@@ -271,6 +276,16 @@ export default function HeroSection() {
               overflow: "hidden",
               boxShadow: "0 0 60px rgba(255,107,43,0.3), 0 0 120px rgba(0,212,255,0.15)",
               border: "1px solid rgba(255,107,43,0.25)",
+              cursor: "pointer",
+              transition: "transform 0.25s ease, box-shadow 0.25s ease",
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLDivElement).style.transform = "scale(1.015)";
+              (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 80px rgba(255,107,43,0.5), 0 0 160px rgba(0,212,255,0.2)";
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLDivElement).style.transform = "scale(1)";
+              (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 60px rgba(255,107,43,0.3), 0 0 120px rgba(0,212,255,0.15)";
             }}
           >
             <img

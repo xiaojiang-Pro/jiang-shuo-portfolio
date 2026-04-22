@@ -58,7 +58,11 @@ const toolTags = [
   { name: "评测报告", emoji: "📊", color: "#7B9FFF" },
 ];
 
-export default function SkillsSection() {
+interface SkillsSectionProps {
+  onOpenLightbox: (index: number) => void;
+}
+
+export default function SkillsSection({ onOpenLightbox }: SkillsSectionProps) {
   return (
     <section
       id="skills"
@@ -167,6 +171,7 @@ export default function SkillsSection() {
         {/* Toruk Official Image - 中间官方图鲁克图片（飞行仰视蓝天） */}
         <div className="flex justify-center my-10">
           <div
+            onClick={() => onOpenLightbox(1)}
             style={{
               position: "relative",
               width: "100%",
@@ -175,6 +180,16 @@ export default function SkillsSection() {
               overflow: "hidden",
               boxShadow: "0 0 80px rgba(255,107,43,0.25), 0 20px 60px rgba(0,0,0,0.5)",
               border: "1px solid rgba(255,140,64,0.2)",
+              cursor: "pointer",
+              transition: "transform 0.25s ease, box-shadow 0.25s ease",
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLDivElement).style.transform = "scale(1.012)";
+              (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 120px rgba(255,107,43,0.4), 0 20px 80px rgba(0,0,0,0.6)";
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLDivElement).style.transform = "scale(1)";
+              (e.currentTarget as HTMLDivElement).style.boxShadow = "0 0 80px rgba(255,107,43,0.25), 0 20px 60px rgba(0,0,0,0.5)";
             }}
           >
             <img

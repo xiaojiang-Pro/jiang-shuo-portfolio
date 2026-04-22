@@ -1,6 +1,6 @@
 /**
  * Design: 潘多拉星球生物发光蓝色主题 - 主页面
- * 整合所有区域组件，添加悬浮游戏按钮
+ * 整合所有区域组件，添加悬浮游戏按钮 + 图鲁克灯箱
  */
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
@@ -11,9 +11,12 @@ import SkillsSection from "@/components/SkillsSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import PandoraGame from "@/components/PandoraGame";
+import TorukLightbox from "@/components/TorukLightbox";
+import { useTorukLightbox, TORUK_IMAGES } from "@/hooks/useTorukLightbox";
 
 export default function Home() {
   const [showGame, setShowGame] = useState(false);
+  const { lightboxIndex, openLightbox, closeLightbox, navigateLightbox } = useTorukLightbox();
 
   useEffect(() => {
     // Scroll reveal animation
@@ -37,12 +40,12 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <HeroSection />
+      <HeroSection onOpenLightbox={openLightbox} />
       <AboutSection />
       <ExperienceSection />
-      <SkillsSection />
+      <SkillsSection onOpenLightbox={openLightbox} />
       <ContactSection />
-      <Footer />
+      <Footer onOpenLightbox={openLightbox} />
 
       {/* Floating Game Button */}
       <button
@@ -68,6 +71,16 @@ export default function Home() {
       {/* Game Modal */}
       {showGame && (
         <PandoraGame onClose={() => setShowGame(false)} />
+      )}
+
+      {/* Toruk Lightbox */}
+      {lightboxIndex !== null && (
+        <TorukLightbox
+          images={TORUK_IMAGES}
+          currentIndex={lightboxIndex}
+          onClose={closeLightbox}
+          onNavigate={navigateLightbox}
+        />
       )}
     </div>
   );
