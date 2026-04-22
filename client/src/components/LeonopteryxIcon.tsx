@@ -9,9 +9,9 @@
 import { useState } from "react";
 
 // 用户提供的三张官方图鲁克图片
-export const TORUK_IMG_1 = "/manus-storage/toruk-official-1_032fd85d.webp"; // 飞行仰视图（蓝天背景）
-export const TORUK_IMG_2 = "/manus-storage/toruk-official-2_e6bf0ffc.jpg";  // 仰视飞翔全身（金黄翼膜）
-export const TORUK_IMG_3 = "/manus-storage/toruk-official-3_e4509d11.jpg";  // 头部特写艺术图（蓝色背景）
+export const TORUK_IMG_1 = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663574304740/vhxdzQzSJhFneqFW.webp"; // 飞行仰视图（蓝天背景）
+export const TORUK_IMG_2 = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663574304740/PMxEgaEDHtaGHJaF.jpg";  // 仰视飞翔全身（金黄翼膜）
+export const TORUK_IMG_3 = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663574304740/syvVMomHhGMRRorr.jpg";  // 头部特写艺术图（蓝色背景）
 
 export default function LeonopteryxIcon() {
   const [hovered, setHovered] = useState(false);
