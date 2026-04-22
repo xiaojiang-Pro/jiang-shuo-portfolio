@@ -293,21 +293,39 @@ export default function HeroSection() {
               height: "80px",
               background: "linear-gradient(to bottom, transparent, rgba(5,10,26,0.9))",
             }} />
-            {/* 标题 */}
+            {/* 标题 - 两行分开显示 */}
             <div style={{
               position: "absolute",
               bottom: "16px",
               left: "50%",
               transform: "translateX(-50%)",
-              color: "rgba(255,140,64,0.9)",
-              fontSize: "12px",
-              letterSpacing: "6px",
-              fontFamily: "'Playfair Display', serif",
-              fontWeight: 700,
-              textShadow: "0 0 16px rgba(255,107,43,0.8)",
-              whiteSpace: "nowrap",
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "6px",
             }}>
-              ✦ TORUK · 潘多拉最强飞行生物 ✦
+              <div style={{
+                color: "rgba(255,140,64,0.9)",
+                fontSize: "13px",
+                letterSpacing: "8px",
+                fontFamily: "'Playfair Display', serif",
+                fontWeight: 700,
+                textShadow: "0 0 16px rgba(255,107,43,0.8)",
+                whiteSpace: "nowrap",
+              }}>
+                ✦ TORUK MAKTO ✦
+              </div>
+              <div style={{
+                color: "rgba(0,212,255,0.75)",
+                fontSize: "11px",
+                letterSpacing: "4px",
+                fontFamily: "'Playfair Display', serif",
+                textShadow: "0 0 12px rgba(0,212,255,0.5)",
+                whiteSpace: "nowrap",
+              }}>
+                潘多拉最强飞行生物
+              </div>
             </div>
           </div>
         </div>
